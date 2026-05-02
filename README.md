@@ -48,6 +48,52 @@ GET /no
 
 Use it in apps, bots, landing pages, Slack integrations, rejection letters, or wherever you need a polite (or witty) no.
 
+### 🧠 Contextual AI Rejections
+
+Self-hosted deployments can also generate a rejection related to a specific message:
+
+```http
+POST /no/ai
+Content-Type: application/json
+```
+
+```json
+{
+  "message": "Can you work this weekend?",
+  "tone": "funny"
+}
+```
+
+Supported tones are `polite`, `funny`, `professional`, `dramatic`, and `chaotic`. If `tone` is missing or invalid, the API uses `funny`.
+
+When an AI provider is configured, the response looks like:
+
+```json
+{
+  "reason": "I respect the invite, but my weekend has filed a formal objection.",
+  "ai": true,
+  "tone": "funny"
+}
+```
+
+If no provider is configured, or the provider is unavailable, the endpoint falls back to a random response:
+
+```json
+{
+  "reason": "This feels like something Future Me would yell at Present Me for agreeing to.",
+  "ai": false,
+  "fallback": "random"
+}
+```
+
+To enable OpenAI:
+
+```bash
+AI_PROVIDER=openai OPENAI_API_KEY=your_api_key npm start
+```
+
+You can override the model with `OPENAI_MODEL`. The default is `gpt-5.2`.
+
 ---
 
 ## 🛠️ Self-Hosting
@@ -106,13 +152,16 @@ For reference, here’s the package config:
   "description": "A lightweight API that returns random rejection or no reasons.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "node --test"
   },
   "author": "hotheadhacker",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.18.2",
-    "express-rate-limit": "^7.0.0"
+    "express-rate-limit": "^7.0.0",
+    "openai": "^6.8.1"
   }
 }
 ```
